@@ -1,5 +1,5 @@
-import express from 'express';
-import 'dotenv/config';
+import express from "express";
+import "dotenv/config";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -8,8 +8,11 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 
 // A simple "Hello World" route
-app.get('/', (req, res) => {
-  res.send({ message: 'The modern backend is alive! 🚀' });
+app.get("/", (req, res) => {
+  res.send({
+    message:
+      "The modern backend is alive! 🚀 The modern backend is alive!The modern backend is alive!The modern backend is alive!",
+  });
 });
 
 app.listen(PORT, () => {
