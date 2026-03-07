@@ -1,0 +1,43 @@
+services:
+        mysql:
+            image: mysql:8.0.40
+            container_name: mysql.airportPulse
+            ports:
+                - "3306:3306"
+            environment:
+                MYSQL_ROOT_PASSWORD: admin
+                MYSQL_DATABASE: airportPulse
+                MYSQL_USER: airportPulse
+                MYSQL_PASSWORD: airportPulse
+            volumes:
+                - mysql_data:/var/lib/mysql
+                - ./utf8mb4.cnf:/etc/mysql/conf.d/utf8mb4.cnf:ro
+                - ./my.cnf:/etc/mysql/conf.d/my.cnf
+                - ./database:/database:rw
+            restart: always
+
+        phpmyadmin:
+            image: phpmyadmin/phpmyadmin:5.2.1
+            container_name: pma.airportPulse
+            ports:
+                - "8080:80"
+            environment:
+                PMA_HOST: mysql.airportPulse
+                PMA_USER: airportPulse
+                PMA_PASSWORD: airportPulse
+                UPLOAD_LIMIT: 250M
+            restart: always
+
+        ngrok:
+            image: ngrok/ngrok:latest
+            container_name: ngrok.airportPulse
+            command: start --all --config /etc/ngrok/ngrok.yml
+            volumes:
+                - ./ngrok.yml:/etc/ngrok/ngrok.yml:ro
+            depends_on:
+                - mysql
+            restart: always
+
+volumes:
+  mysql_data:
+    driver: local

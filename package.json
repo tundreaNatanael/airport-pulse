@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "node src/index.js",
+    "db:sync": "node --env-file=.env src/Database/database/dbDefinition/db-sync.js",
     "lint": "eslint .",
     "prettier": "prettier --write .",
     "format": "prettier --write . && eslint . --fix"
@@ -17,7 +18,9 @@
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
     "graphql": "^16.13.1",
-    "graphql-http": "^1.22.4"
+    "graphql-http": "^1.22.4",
+    "mysql2": "^3.19.0",
+    "sequelize": "^6.37.7"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.0",
