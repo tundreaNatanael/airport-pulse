@@ -16,13 +16,13 @@ app.use("/api", apiRouter);
 // B2C (passengers) graphql entry point
 app.use("/graphql", graphqlRouter);
 
-// // A simple "Hello World" route
-// app.get("/", (req, res) => {
-//   res.send({
-//     message:
-//       "The Airport Pulse backend is alive! 🚀",
-//   });
-// });
+// A simple "Hello World" route
+app.get("/", (req, res) => {
+  res.send({
+    message:
+      "The Airport Pulse backend is alive! 🚀",
+  });
+});
 
 app.listen(PORT, () => {
   console.log(`Airport Pulse server is running on http://localhost:${PORT}`);

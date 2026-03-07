@@ -85,7 +85,6 @@ async function loadGraphQLHandler() {
   });
 }
 
-// B2C GraphQL endpoint (prepared to be extended)
 router.all("/", async (req, res, next) => {
   if (!cachedHandler) {
     cachedHandler = await loadGraphQLHandler();
