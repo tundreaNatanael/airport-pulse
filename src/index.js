@@ -2,11 +2,13 @@ import express from "express";
 import "dotenv/config";
 import apiRouter from "./routes/api/index.js";
 import graphqlRouter from "./routes/graphql/index.js";
+import cors from 'cors';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
+app.use(cors());
 
 // B2B (partners) entry points
 app.use("/api", apiRouter);
