@@ -2,7 +2,7 @@ import express from "express";
 import "dotenv/config";
 import apiRouter from "./routes/api/index.js";
 import graphqlRouter from "./routes/graphql/index.js";
-import cors from 'cors';
+import cors from "cors";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -19,8 +19,7 @@ app.use("/graphql", graphqlRouter);
 // A simple "Hello World" route
 app.get("/", (req, res) => {
   res.send({
-    message:
-      "The Airport Pulse backend is alive! 🚀",
+    message: "The Airport Pulse backend is alive! 🚀",
   });
 });
 
