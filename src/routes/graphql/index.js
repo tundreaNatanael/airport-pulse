@@ -23,6 +23,44 @@ async function loadGraphQLHandler() {
     return null;
   };
 
+  const normalizeConnectionSelection = (value) => {
+    if (!value) return null;
+
+    const allowed = new Set([
+      "boltServices",
+      "uberServices",
+      "publicTransport.taxi",
+      "publicTransport.metro",
+      "publicTransport.trains",
+      "rentalCar",
+    ]);
+
+    const aliases = {
+      bolt: "boltServices",
+      boltservices: "boltServices",
+      uber: "uberServices",
+      uberservices: "uberServices",
+      taxi: "publicTransport.taxi",
+      "publictransport.taxi": "publicTransport.taxi",
+      metro: "publicTransport.metro",
+      "publictransport.metro": "publicTransport.metro",
+      train: "publicTransport.trains",
+      trains: "publicTransport.trains",
+      "publictransport.trains": "publicTransport.trains",
+      rentalcar: "rentalCar",
+      "rental car": "rentalCar",
+    };
+
+    const trimmed = `${value}`.trim();
+
+    if (allowed.has(trimmed)) {
+      return trimmed;
+    }
+
+    const aliasKey = trimmed.toLowerCase().replace(/\s+/g, "");
+    return aliases[aliasKey] ?? null;
+  };
+
   const fetchFlightByDesignator = async (flightDesignator) => {
     const candidateColumns = [
       "flight_designator",
@@ -183,6 +221,7 @@ async function loadGraphQLHandler() {
       luggageType: String!
       luggageCount: Int
       companionsCount: Int
+      connectionSelected: String
     }
 
     type PassengerIntakeResponse {
@@ -271,11 +310,24 @@ async function loadGraphQLHandler() {
           };
         }
 
+        const connectionSelected = normalizeConnectionSelection(
+          input.connectionSelected,
+        );
+
+        if (input.connectionSelected && !connectionSelected) {
+          return {
+            ok: false,
+            message:
+              "connectionSelected must be one of boltServices, uberServices, publicTransport.taxi, publicTransport.metro, publicTransport.trains, rentalCar.",
+          };
+        }
+
         await pushRows("passengers", {
           flightDesignator: input.flightDesignator ?? null,
           luggageType: input.luggageType,
           luggageCount: input.luggageCount ?? null,
           companionsCount: input.companionsCount ?? null,
+          connectionSelected: connectionSelected ?? null,
         });
 
         return {
