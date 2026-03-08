@@ -48,7 +48,11 @@ router.get("/arrivals", async (req, res) => {
     const intervalMs = 10 * 60 * 1000;
     const windows = [];
 
-    for (let ts = startDate.getTime(); ts < endDate.getTime(); ts += intervalMs) {
+    for (
+      let ts = startDate.getTime();
+      ts < endDate.getTime();
+      ts += intervalMs
+    ) {
       windows.push({
         start: new Date(ts),
         end: new Date(Math.min(ts + intervalMs, endDate.getTime())),
