@@ -96,53 +96,29 @@ async function loadGraphQLHandler() {
     return null;
   };
 
-  const mapFlightDetails = (flightRow, airportRow) => {
-    const departureAirportCode = pickFrom(
-      flightRow,
-      "departure_airport",
-      "departure_airport_code",
-      "departureAirport",
-      "departure_code",
-      "from_airport",
-    );
+  const mapFlightDetails = (flightRow, arrivalAirport, departureAirport) => {
+    // const departureAirportCode = pickFrom(
+    //   flightRow,
+    //   "departure_airport",
+    //   "departure_airport_code",
+    //   "departureAirport",
+    //   "departure_code",
+    //   "from_airport",
+    // );
 
-    const arrivalAirportCode = pickFrom(
-      flightRow,
-      "arrival_airport",
-      "arrival_airport_code",
-      "arrivalAirport",
-      "arrival_code",
-      "to_airport",
-    );
+    // const arrivalAirportCode = pickFrom(
+    //   flightRow,
+    //   "arrival_airport",
+    //   "arrival_airport_code",
+    //   "arrivalAirport",
+    //   "arrival_code",
+    //   "to_airport",
+    // );
 
-    const connections = airportRow
-      ? {
-          boltServices: pickFrom(
-            airportRow,
-            "bolt_services",
-            "boltServices",
-            "bolt",
-          ),
-          uberServices: pickFrom(
-            airportRow,
-            "uber_services",
-            "uberServices",
-            "uber",
-          ),
-          public_transport: {
-            taxi: pickFrom(airportRow, "taxi", "taxis"),
-            buses: pickFrom(airportRow, "buses", "bus"),
-            metro: pickFrom(airportRow, "metro", "subway"),
-            trains: pickFrom(airportRow, "trains", "rail"),
-            rental_car: pickFrom(
-              airportRow,
-              "rental_car",
-              "rentalCars",
-              "rental_car_available",
-            ),
-          },
-        }
-      : null;
+    const departureAirportName = departureAirport?.name;
+    const arrivalAirportName = arrivalAirport?.name;
+
+    const connections = arrivalAirport?.connections;
 
     return {
       flight_number: pickFrom(
@@ -190,8 +166,8 @@ async function loadGraphQLHandler() {
         "duration",
         "elapsed_time",
       ),
-      departure_airport: departureAirportCode,
-      arrival_airport: arrivalAirportCode,
+      departure_airport: departureAirportName,
+      arrival_airport: arrivalAirportName,
       connections,
     };
   };
@@ -225,7 +201,7 @@ async function loadGraphQLHandler() {
     type Connections {
       boltServices: String
       uberServices: String
-      public_transport: PublicTransport
+      publicTransport: PublicTransport
     }
 
     type FlightDetails {
@@ -255,29 +231,22 @@ async function loadGraphQLHandler() {
         return null;
       }
 
-      const arrivalAirportCode = pickFrom(
-        flight,
-        "arrival_airport",
-        "arrival_airport_code",
-        "arrivalAirport",
-        "arrival_code",
-        "to_airport",
-      );
+      const arrivalAirportCode = flight?.arrival_airport_iata;
+      const departureAirportCode = flight?.departure_airport_iata;
 
-      const departureAirportCode = pickFrom(
-        flight,
-        "departure_airport",
-        "departure_airport_code",
-        "departureAirport",
-        "departure_code",
-        "from_airport",
-      );
+      // const departureAirportCode = pickFrom(
+      //   flight,
+      //   "departure_airport",
+      //   "departure_airport_code",
+      //   "departureAirport",
+      //   "departure_code",
+      //   "from_airport",
+      // );
 
-      const airport =
-        (await fetchAirportByCode(arrivalAirportCode)) ||
-        (await fetchAirportByCode(departureAirportCode));
+      const arrivalAirport = await fetchAirportByCode(arrivalAirportCode);
+      const departureAirport = await fetchAirportByCode(departureAirportCode);
 
-      return mapFlightDetails(flight, airport);
+      return mapFlightDetails(flight, arrivalAirport, departureAirport);
     },
     submitPassengerIntake: async ({ input }) => {
       try {
